@@ -22,17 +22,25 @@ def scrapeOptions():
 
 def parseData(soup) -> list:
     
-    shownOptions = soup.select(".facetbox-shownrow > a", strip=True)
-    hiddenOptions = soup.select(".facetbox-hiddenrow > a", strip=True)
+    
+
+    fshownOptions = soup.find_all("li", attrs ={"class": "facetbox-shownrow"})
+    fhiddenOptions = soup.find_all("li", attrs={"class": "facetbox-hiddenrow"})
+
+    #li.findChildren("a" , recursive=False)
+
     words = []
 
-    for links in shownOptions:
-        print(links.text)
-    print('HIDDEN')
-    for links in hiddenOptions:
-        print(links.text)
+    for items in fshownOptions:
+        content = items.a.text.strip().replace(" ", "+")
+        content = content[:content.find("++")].replace("+", " ")
+        print(content)
+        #items.find("a", attrs = {""})
+    print(fhiddenOptions)
+    for links in fhiddenOptions:
+        print(links)
 
-    print(hiddenOptions)
+    #print(hiddenOptions)
     
     return words
     # print(shownOptions[0].contents)
