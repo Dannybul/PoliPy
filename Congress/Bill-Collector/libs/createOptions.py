@@ -6,48 +6,50 @@ from requests import Response
 import requests
 
 
-def createFile(text):
-    optionsFile = open("optionsText.txt", "w+")
-    optionsFile.write(text)
+class createOptions:
+    def __init__(self, **kwargs):
+        self.url = kwargs['url']
+        self.fileName = "optionsText.txt"
 
 
-def scrapeOptions():
-    response = requests.get(
-        #"https://www.congress.gov/search?searchResultViewType=expanded"
-        'https://www.congress.gov/search'
-    )
-    soup = BeautifulSoup(markup=response.content, features="lxml")
-    return soup
+    def createFile(self, text):
+        optionsFile = open(self.fileName, "w+")
+        optionsFile.write(text)
 
 
-def parseData(soup) -> list:
-    
-    
-
-    fshownOptions = soup.find_all("li", attrs ={"class": "facetbox-shownrow"})
-    fhiddenOptions = soup.find_all("li", attrs={"class": "facetbox-hiddenrow"})
-
-    #li.findChildren("a" , recursive=False)
-
-    words = []
-
-    for items in fshownOptions:
-        content = items.a.text.strip().replace(" ", "+")
-        content = content[:content.find("++")].replace("+", " ")
-        print(content)
-        #items.find("a", attrs = {""})
-    print(fhiddenOptions)
-    for links in fhiddenOptions:
-        print(links)
-
-    #print(hiddenOptions)
-    
-    return words
-    # print(shownOptions[0].contents)
+    def scrapeOptions(self):
+        response = requests.get(
+            #"https://www.congress.gov/search?searchResultViewType=expanded"
+            self.url
+        )
+        soup = BeautifulSoup(markup=response.content, features="lxml")
+        return soup
 
 
-resp = scrapeOptions()
-print(parseData(resp))
+    def parseData(self, soup) -> list:
+        fshownOptions = soup.find_all("li", attrs ={"class": "facetbox-shownrow"})
+        fhiddenOptions = soup.find_all("li", attrs={"class": "facetbox-hiddenrow"})
+        #li.findChildren("a" , recursive=False)
+        words = []
+
+        for items in fshownOptions:
+            content = items.a.text.strip().replace(" ", "+")
+            content = content[:content.find("++")].replace("+", " ")
+            print(content)
+            #items.find("a", attrs = {""})
+        print(fhiddenOptions)
+        for links in fhiddenOptions:
+            print(links)
+
+        #print(hiddenOptions)
+        
+        return words
+        # print(shownOptions[0].contents)
+
+options = createOptions(url = 'https://www.congress.gov/search')
+resp = options.scrapeOptions()
+options.createFile(str(resp))
+print(options.parseData(resp))
 
 # full options specific wording
 # everytime you click option need specific url
